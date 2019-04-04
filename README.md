@@ -8,7 +8,7 @@ There are several rules when selecting events for the team at APAC:
 2. Each athlete can only participate in a total of **five events** including relays: three individual events two relays, two individuals and three realys, four individuals events 1 relay etc.
 3. There can only be a maximum of **four athletes** representing each team for each event.
 4. There can be a maximum of **two relay teams** representing each team for each relay event.
-5. Each relay team must have **four memembers**.
+5. Each relay team must have **four members**.
 
 ### Cost Function
 The table for scoring at APAC:
