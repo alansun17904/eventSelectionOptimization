@@ -70,3 +70,4 @@ for swimmer in SWIMMERS:
 outputDF = pd.DataFrame(output, index=SWIMMERS, columns=allEvents)
 print(outputDF)
 print(pulp.value(model.objective))
+outputDF.to_excel('data/schema.xlsx', sheet_name='bois_schema')

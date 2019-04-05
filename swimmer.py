@@ -118,7 +118,6 @@ class Filter:
         If they do not have that skill then a large negative number is used to denote the large risk / cost
         putting that swimmer in this event implies.
         """
-        return -1000
         skillFinder = {
             'FRRelay4P50'    : 'FR50m',
             'FRRelay4P100'   : 'FR100m',

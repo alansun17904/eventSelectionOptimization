@@ -12,6 +12,7 @@ class ScoreSchema:
         originalData = pd.read_excel('data/ilikeswim.xlsx', sheet_name='bois')
         originalData['Time'] = originalData['Time'].apply(ScoreSchema.timeConversion)
         self.schema = []
+        self.timeSchema = originalData
         for swimmer in SWIMMERS:
             targetSwimmer = []
             for race in list(SwimmingRace):
