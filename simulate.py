@@ -41,6 +41,26 @@ class Simulation:
         time = self.timeSchema[(self.timeSchema['Name'] == name) \
             & (self.timeSchema['Event'] == event)].iloc[0]['Time']
         return (event, time)
+    
+    def calculateRelayTime(self, adjustment=0.):
+        """
+        adjustment (float): adds a amount of time to the final calculated relay
+        time based on the how well the optimizer thinks that the team is 
+        going to perform.
+        :return (float): the final time in seconds.
+        """
+        return
+    
+    def compareTime(self, name, event, prelims=True):
+        """
+        Compares the time of swimmer with the league / competition.
+        :return (int): the rank of the swimmer were to swim with
+        the rest of the competition.
+        """
+        return
+
+    def simulate(self):
+        return
 
 if __name__ == '__main__':
     schema = ScoreSchema()
