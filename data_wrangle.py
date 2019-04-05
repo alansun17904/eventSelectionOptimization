@@ -9,7 +9,7 @@ from swimmer import Filter
 
 class ScoreSchema:
     def __init__(self):
-        originalData = pd.read_excel('app/data/ilikeswim.xlsx', sheet_name='bois')
+        originalData = pd.read_excel('data/ilikeswim.xlsx', sheet_name='bois')
         originalData['Time'] = originalData['Time'].apply(ScoreSchema.timeConversion)
         self.schema = []
         for swimmer in SWIMMERS:

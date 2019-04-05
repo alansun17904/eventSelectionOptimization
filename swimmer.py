@@ -83,7 +83,7 @@ class Filter:
         """
         racesForTargetSwimmer = df[(df['Event']==event) & (df['Name']==name)]
         if len(racesForTargetSwimmer) == 0:
-            return Filter.assessSkill(df, name, event)
+            return [event, Filter.assessSkill(df, name, event)]
         else:
             if len(racesForTargetSwimmer) == 1:
                 place = racesForTargetSwimmer.iloc[0]['Rank']
@@ -108,6 +108,7 @@ class Filter:
     @staticmethod
     def assessSkill(df, name, event):
         """
+        event (str): the name of the event that does not have a rank.
         If you have an individual time for the FR50 or the FR100 and never swam in a relay before your point
         contribution to that relay would be you score in that event / 2.
         If you have a time in one of the 50IMs that could also be used when you are being seeded into the IMRelay.
@@ -117,9 +118,24 @@ class Filter:
         If they do not have that skill then a large negative number is used to denote the large risk / cost
         putting that swimmer in this event implies.
         """
-            
-        return [event, -100]
-
+        return -1000
+        skillFinder = {
+            'FRRelay4P50'    : 'FR50m',
+            'FRRelay4P100'   : 'FR100m',
+            'IMRelay4P50_FR' : 'FR50m',
+            'IMRelay4P50_BR' : 'BR50m',
+            'IMRelay4P50_BA' : 'BA50m',
+            'IMRelay4P50_FLY': 'FLY50m'
+        }
+        if event in skillFinder.keys():
+            skill = skillFinder[event]
+            if len(df[(df['Event']==skill) & (df['Name']==name)]) == 0:
+                # if the person does not possess this event and also does not have the skill
+                return -1000
+            place = df[(df['Event']==skill) & (df['Name']==name)]['Rank'].iloc[0]
+            return Filter.rank(place) / 4
+        else:
+            return -1000
 
 if __name__ == '__main__':
-    pass
+    print(Filter.assessSkill(0, 0, 0))
