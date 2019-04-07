@@ -67,7 +67,7 @@ for swimmer in SWIMMERS:
     output.append(row)
 
 
-outputDF = pd.DataFrame(output, index=SWIMMERS, columns=allEvents)
-print(outputDF)
+OUTPUTDF = pd.DataFrame(output, index=SWIMMERS, columns=allEvents)
+print(OUTPUTDF)
 print(pulp.value(model.objective))
-outputDF.to_excel('data/schema.xlsx', sheet_name='bois_schema')
+OUTPUTDF.to_excel('data/schema.xlsx', sheet_name='bois_schema')

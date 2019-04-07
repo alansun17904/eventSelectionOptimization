@@ -60,6 +60,14 @@ class SwimmingRace(enum.Enum):
 
 
 class Filter:
+    skillFinder = {
+    'FRRelay4P50'    : 'FR50m',
+    'FRRelay4P100'   : 'FR100m',
+    'IMRelay4P50_FR' : 'FR50m',
+    'IMRelay4P50_BR' : 'BR50m',
+    'IMRelay4P50_BA' : 'BA50m',
+    'IMRelay4P50_FLY': 'FLY50m'
+    }
     @staticmethod
     def rank(place):
         # this needs to be changed based on the number of lanes in the pool
@@ -109,25 +117,18 @@ class Filter:
     def assessSkill(df, name, event):
         """
         event (str): the name of the event that does not have a rank.
-        If you have an individual time for the FR50 or the FR100 and never swam in a relay before your point
-        contribution to that relay would be you score in that event / 2.
-        If you have a time in one of the 50IMs that could also be used when you are being seeded into the IMRelay.
+        If you have an individual time for the FR50 or the FR100 and never 
+        swam in a relay before your point contribution to that relay would be 
+        you score in that event / 2. If you have a time in one of the 50IMs that could 
+        also be used when you are being seeded into the IMRelay.
 
         Rankings in relays cannot be converted and used as individual time. 
         :returns: the amount of points that the swimmer would get in that event based on their skills.
         If they do not have that skill then a large negative number is used to denote the large risk / cost
         putting that swimmer in this event implies.
         """
-        skillFinder = {
-            'FRRelay4P50'    : 'FR50m',
-            'FRRelay4P100'   : 'FR100m',
-            'IMRelay4P50_FR' : 'FR50m',
-            'IMRelay4P50_BR' : 'BR50m',
-            'IMRelay4P50_BA' : 'BA50m',
-            'IMRelay4P50_FLY': 'FLY50m'
-        }
-        if event in skillFinder.keys():
-            skill = skillFinder[event]
+        if event in Filter.skillFinder.keys():
+            skill = Filter.skillFinder[event]
             if len(df[(df['Event']==skill) & (df['Name']==name)]) == 0:
                 # if the person does not possess this event and also does not have the skill
                 return -1000
