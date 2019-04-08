@@ -13,19 +13,19 @@ There are several rules when selecting events for the team at APAC:
 ### Cost Function
 The table for scoring at APAC:
 
-| Rank | Points |
-|------|--------|
-| 1    | 16     |
-| 2    | 13     |
-| 3    | 12     |
-| 4    | 11     |
-| 5    | 10     |
-| 6    | 9      |
-| 7    | 7      |
-| 8    | 5      |
-| 9    | 4      |
-| 10   | 3      |
-| 11   | 2      |
-| 12   | 1      |
+| Rank | Individual Points | Relay Points |
+|:---:|:---:| :---:|
+| 1    | 16     | 32 |
+| 2    | 13     | 26 |
+| 3    | 12     | 24 |
+| 4    | 11     | 22 |
+| 5    | 10     | 20 |
+| 6    | 9      | 18 |
+| 7    | 7      | 14 |
+| 8    | 5      | 10 |
+| 9    | 4      | 8 |
+| 10   | 3      | 6 |
+| 11   | 2      | 4 |
+| 12   | 1      | 2 |
 
 I will be using a custom made cost function.
