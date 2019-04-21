@@ -14,6 +14,7 @@ IMrelay = [v.name for v in list(SwimmingRace) if v.value >= 15]
 strategySchema = pd.DataFrame(np.zeros(shape=(12, 18)), index=SWIMMERS, columns=allEvents)
 scoreSchema = ScoreSchema()
 print(scoreSchema.schema)
+print(scoreSchema.timeSchema)
 
 # PROBLEM
 model = pulp.LpProblem('Swimming score maximizing problem', pulp.LpMaximize)

@@ -28,6 +28,8 @@ class Simulation:
 
     @staticmethod
     def timeConversionAPAC(time):
+        if type(time) == str and len(time.split('.')) == 2:
+            return float(time)
         if type(time) == float or type(time) == int:
             return float(time)
         s = time.split('.')
@@ -80,7 +82,7 @@ class Simulation:
         if self.prelimes == True:
             eventPrelims = self.test[(self.test['Event']==event) & \
                 (self.test['Prelim/Final']=='Prelim')]
-            rank = eventPrelims[eventPrelims['Time']<]
+            # rank = eventPrelims[eventPrelims['Time']<]
         return
 
     def simulate(self):
@@ -91,7 +93,8 @@ class Simulation:
         return
 
 if __name__ == '__main__':
-    schema = ScoreSchema()
-    s = Simulation(schema.timeSchema, OUTPUTDF, '2018', 'ISB', prelims=False)
-    print(s.searchTime('Miles Huang', 'FR50m'))
-    print(s.calculateRelayTime()) 
+    # schema = ScoreSchema()
+    # s = Simulation(schema.timeSchema, OUTPUTDF, '2018', 'ISB', prelims=False)
+    # print(s.searchTime('Miles Huang', 'FR50m'))
+    # print(s.calculateRelayTime()) 
+    print(Simulation.timeConversionAPAC('29.00'))

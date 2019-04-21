@@ -12,14 +12,18 @@ class ScoreSchema:
         originalData = pd.read_excel('data/ilikeswim.xlsx', sheet_name='bois')
         originalData['Time'] = originalData['Time'].apply(ScoreSchema.timeConversion)
         self.schema = []
-        self.timeSchema = originalData
+        self.timeSchema = []
         for swimmer in SWIMMERS:
-            targetSwimmer = []
+            targetSwimmerScore = []
+            targetSwimmerTime = []
             for race in list(SwimmingRace):
-                event, score = Filter.takeMax(originalData, swimmer, race.name)
-                targetSwimmer.append(score)
-            self.schema.append(targetSwimmer)
+                event, score, time = Filter.takeMax(originalData, swimmer, race.name)
+                targetSwimmerScore.append(score)
+                targetSwimmerTime.append(time)
+            self.schema.append(targetSwimmerScore)
+            self.timeSchema.append(targetSwimmerTime)
         self.schema = pd.DataFrame(self.schema, index=SWIMMERS, columns=[v.name for v in list(SwimmingRace)])
+        self.timeSchema = pd.DataFrame(self.timeSchema, index=SWIMMERS, columns=[v.name for v in list(SwimmingRace)])
     @staticmethod
     def timeConversion(time):
         totalTime = 0

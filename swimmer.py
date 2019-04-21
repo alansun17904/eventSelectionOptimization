@@ -87,18 +87,21 @@ class Filter:
         outputs a list with the name of the event and the swimmers score in that event.
         It calculates the score using the maximum function, considering all of
         the swims and taking the best one.
-        :return: [event, score]
+        :return: [event (str), score (int), time (float)]
         """
         racesForTargetSwimmer = df[(df['Event']==event) & (df['Name']==name)]
         if len(racesForTargetSwimmer) == 0:
-            return [event, Filter.assessSkill(df, name, event)]
+            points, time = Filter.assessSkill(df, name, event)
+            return [event, points, time]
         else:
             if len(racesForTargetSwimmer) == 1:
                 place = racesForTargetSwimmer.iloc[0]['Rank']
-                return [event, Filter.rank(place)]
+                time = racesForTargetSwimmer.iloc[0]['Time']
+                return [event, Filter.rank(place), time]
             else:
                 minimum = racesForTargetSwimmer.loc[racesForTargetSwimmer.idxmin()]
-                place = racesForTargetSwimmer.iloc[0]['Rank']
+                place = minimum.iloc[0]['Rank']
+                time = minimum.iloc[0]['Time']
                 return [event, Filter.rank(place)]
     
     @staticmethod
@@ -129,13 +132,15 @@ class Filter:
         """
         if event in Filter.skillFinder.keys():
             skill = Filter.skillFinder[event]
-            if len(df[(df['Event']==skill) & (df['Name']==name)]) == 0:
+            swimmerEvent = df[(df['Event']==skill) & (df['Name']==name)]
+            if len(swimmerEvent) == 0:
                 # if the person does not possess this event and also does not have the skill
-                return -1000
-            place = df[(df['Event']==skill) & (df['Name']==name)]['Rank'].iloc[0]
-            return Filter.rank(place) / 4
+                return (-1000, 'NT')
+            place = swimmerEvent['Rank'].iloc[0]
+            time = swimmerEvent['Time'].iloc[0]
+            return (Filter.rank(place) / 4, time)
         else:
-            return -1000
+            return (-1000, 'NT')
 
 if __name__ == '__main__':
     print(Filter.assessSkill(0, 0, 0))
