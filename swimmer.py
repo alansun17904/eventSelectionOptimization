@@ -37,6 +37,7 @@ SCORE_8LANE = {
 SWIMMERS = ['Miles Huang', 'Curtis Wong', 'King Wah Yip', 'Justin Choi', 'Aaron Wu', 'Frank Zhou',
             'Alan Wang', 'Alan Sun', 'Bernard Ip', 'Kan KikuchiYuan', 'Jerry Zheng', 'Aaron Sun']
 
+
 @enum.unique
 class SwimmingRace(enum.Enum):
     FR50m = 1
@@ -60,14 +61,13 @@ class SwimmingRace(enum.Enum):
 
 
 class Filter:
-    skillFinder = {
-    'FRRelay4P50'    : 'FR50m',
-    'FRRelay4P100'   : 'FR100m',
-    'IMRelay4P50_FR' : 'FR50m',
-    'IMRelay4P50_BR' : 'BR50m',
-    'IMRelay4P50_BA' : 'BA50m',
-    'IMRelay4P50_FLY': 'FLY50m'
-    }
+    skillFinder = {'FRRelay4P50': 'FR50m',
+                   'FRRelay4P100': 'FR100m',
+                   'IMRelay4P50_FR': 'FR50m',
+                   'IMRelay4P50_BR': 'BR50m',
+                   'IMRelay4P50_BA': 'BA50m',
+                   'IMRelay4P50_FLY': 'FLY50m'}
+
     @staticmethod
     def rank(place):
         # this needs to be changed based on the number of lanes in the pool
@@ -89,7 +89,7 @@ class Filter:
         the swims and taking the best one.
         :return: [event (str), score (int), time (float)]
         """
-        racesForTargetSwimmer = df[(df['Event']==event) & (df['Name']==name)]
+        racesForTargetSwimmer = df[(df['Event'] == event) & (df['Name'] == name)]
         if len(racesForTargetSwimmer) == 0:
             points, time = Filter.assessSkill(df, name, event)
             return [event, points, time]
@@ -132,15 +132,15 @@ class Filter:
         """
         if event in Filter.skillFinder.keys():
             skill = Filter.skillFinder[event]
-            swimmerEvent = df[(df['Event']==skill) & (df['Name']==name)]
+            swimmerEvent = df[(df['Event'] == skill) & (df['Name'] == name)]
             if len(swimmerEvent) == 0:
                 # if the person does not possess this event and also does not have the skill
-                return (-1000, 'NT')
+                return -1000, 'NT'
             place = swimmerEvent['Rank'].iloc[0]
             time = swimmerEvent['Time'].iloc[0]
-            return (Filter.rank(place) / 4, time)
+            return Filter.rank(place) / 4, time
         else:
-            return (-1000, 'NT')
+            return -1000, 'NT'
 
 if __name__ == '__main__':
     print(Filter.assessSkill(0, 0, 0))

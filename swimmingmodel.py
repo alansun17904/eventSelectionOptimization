@@ -6,7 +6,7 @@ from wrangle import ScoreSchema
 
 class Model:
     def __init__(self, swimmers: list, events: list, min_relays: int, max_relays: int, score,
-                 ind_events: int , ind_relay_events: int, individualEvents: list, IMrelay: list, team_num: int):
+                 ind_events: int, ind_relay_events: int, individualEvents: list, IMrelay: list, team_num: int):
         """
         Constructuor that creates a new LP Problem using the `pulp` package.
         :param swimmers: A list of all the names (str) of the swimmers being optimzed.
