@@ -3,7 +3,7 @@ import pulp
 import numpy as np
 from swimmer import SWIMMERS
 from swimmer import SwimmingRace
-from data_wrangle import ScoreSchema
+from wrangle import ScoreSchema
 
 
 allEvents = [v.name for v in list(SwimmingRace)]
@@ -20,9 +20,8 @@ print(scoreSchema.timeSchema)
 model = pulp.LpProblem('Swimming score maximizing problem', pulp.LpMaximize)
 
 # creating all the variables
-swimmerStatus = pulp.LpVariable.dicts('swimmerStatus', 
-                            ((swimmer, event) for swimmer in SWIMMERS for event in allEvents), 
-                            cat='Binary')
+swimmerStatus = pulp.LpVariable.dicts('swimmerStatus',
+                                     ((swimmer, event) for swimmer in SWIMMERS for event in allEvents), cat='Binary')
 numberOfRelays = pulp.LpVariable('numberOfRelays', lowBound=1, upBound=2, cat=pulp.LpInteger)
 
 # COST FUNCTION

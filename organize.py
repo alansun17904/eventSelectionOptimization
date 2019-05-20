@@ -5,6 +5,7 @@ import sys
 
 
 og = pd.read_excel('raw_data/allagegroups.xlsx', sheet_name='Sheet1')
+# creating a new dataframe to fit in all the data
 df = pd.DataFrame(columns=['Time', 'Event', 'Name', 'Age', 'Date', 'Meet'])
 print(df)
 currentRow = {}
