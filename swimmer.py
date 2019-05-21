@@ -1,6 +1,8 @@
 import enum
+import apac
 
 SCORE = {
+    0:  30,  # TODO: This is a temporary fix for to avoid implementing a cost function
     1:  16,
     2:  13,
     3:  12,
@@ -16,6 +18,7 @@ SCORE = {
 }
 
 SCORE_8LANE = {
+    0:  30,  # TODO: This is a temporary fix for to avoid implementing a cost function
     1:  20,
     2:  17,
     3:  16,
@@ -34,7 +37,7 @@ SCORE_8LANE = {
     16: 1
 }
 
-SWIMMERS = ['Miles Huang', 'Curtis Wong', 'King Wah Yip', 'Justin Choi', 'Aaron Wu', 'Frank Zhou',
+SWIMMERS = ['Miles Huang', 'Curtis Wong', 'King Wah', 'Justin Choi', 'Aaron Wu', 'Frank Zhou',
             'Alan Wang', 'Alan Sun', 'Bernard Ip', 'Kan KikuchiYuan', 'Jerry Zheng', 'Aaron Sun']
 
 
@@ -61,6 +64,7 @@ class SwimmingRace(enum.Enum):
 
 
 class Filter:
+    ranksuite = apac.APAC()  # FIXME: This is not good architecture....
     skillFinder = {'FRRelay4P50': 'FR50m',
                    'FRRelay4P100': 'FR100m',
                    'IMRelay4P50_FR': 'FR50m',
@@ -95,15 +99,17 @@ class Filter:
             return [event, points, time]
         else:
             if len(racesForTargetSwimmer) == 1:
-                place = racesForTargetSwimmer.iloc[0]['Rank']
                 time = racesForTargetSwimmer.iloc[0]['Time']
+                place = Filter.ranksuite.compare(event, time)
                 return [event, Filter.rank(place), time]
             else:
                 minimum = racesForTargetSwimmer.loc[racesForTargetSwimmer['Time'].idxmin()]
-                print(minimum)
-                place = minimum.loc['Rank']
-                # time = minimum.iloc[0]['Time']
-                return [event, Filter.rank(place)]
+                # COST FUNCTION RIGHT HERE
+                time = minimum.loc['Time']
+                place = Filter.ranksuite.compare(event, time)
+                if place == 0:  # Relay event
+                    p, = Filter.assessSkill(df, name, event)
+                return [event, Filter.rank(place), time]
     
     @staticmethod
     def takeAverage(df, name, event):
@@ -134,11 +140,11 @@ class Filter:
         if event in Filter.skillFinder.keys():
             skill = Filter.skillFinder[event]
             swimmerEvent = df[(df['Event'] == skill) & (df['Name'] == name)]
-            if len(swimmerEvent) == 0:
+            time = swimmerEvent['Time'].iloc[0]
+            if swimmerEvent.shape[0] == 0:
                 # if the person does not possess this event and also does not have the skill
                 return -1000, 'NT'
-            place = swimmerEvent['Rank'].iloc[0]
-            time = swimmerEvent['Time'].iloc[0]
+            place = Filter.ranksuite.compare(skill, time)
             return Filter.rank(place) / 4, time
         else:
             return -1000, 'NT'

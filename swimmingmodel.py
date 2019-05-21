@@ -2,6 +2,7 @@ import pulp
 from swimmer import SWIMMERS
 from swimmer import SwimmingRace
 from wrangle import ScoreSchema
+import pandas as pd
 
 
 class Model:
@@ -84,4 +85,11 @@ if __name__ == "__main__":
     # create new lp problem
     model = Model(SWIMMERS, allEvents, min_relays=1, max_relays=2, score=scoreSchema, ind_events=4,
                   ind_relay_events=5, individualEvents=individualEvents, IMrelay=IMrelay, team_num=4)
-    print(model.optimize())
+    strategy = pd.DataFrame(model.optimize(), index=SWIMMERS, columns=allEvents)
+    # TODO: Add a time schema to see the times chosen for the program
+
+
+    # Write to excel
+    strategy.to_excel('data/schema.xlsx', sheet_name="Strategy")
+    scoreSchema.schema.to_excel('data/scoring.xlsx', sheet_name="Scoring")
+

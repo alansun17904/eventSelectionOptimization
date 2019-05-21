@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 import numpy as np
 import os
 from wrangle import ScoreSchema
@@ -17,14 +18,14 @@ class Simulation:
         self.prelims = prelims
         originalData = pd.read_excel('data/APAC_all.xlsx', sheet_name="Sheet1")
         originalData['Time'] = originalData['Time'].apply(Simulation.timeConversionAPAC)
-        originalData['Date'] = originalData['Date'].apply(lambda s: str(s)[:4])
-        self.test = originalData[originalData['Date']==year]
+        originalData['Date'] = originalData['Date'].apply(lambda s: datetime.strptime(str(s), '%Y%m%d'))
+        self.test = originalData[originalData['Date'].year == year]
         
-        if removeSelf == True:
-            self.test = self.test[self.test['SchoolSerial']!=school]
-        if prelims == False:
-            self.test = self.test[self.test['Prelim/Finals']!='Prelim']
-        self.test = self.test[self.test['Gender']==gender]
+        if removeSelf:
+            self.test = self.test[self.test['SchoolSerial'] != school]
+        if not prelims:
+            self.test = self.test[self.test['Prelim/Finals'] != 'Prelim']
+        self.test = self.test[self.test['Gender'] == gender]
 
     @staticmethod
     def timeConversionAPAC(time):
@@ -94,7 +95,7 @@ class Simulation:
 
 if __name__ == '__main__':
     # schema = ScoreSchema()
-    # s = Simulation(schema.timeSchema, OUTPUTDF, '2018', 'ISB', prelims=False)
+    s = Simulation(schema.timeSchema, OUTPUTDF, '2018', 'ISB', prelims=False)
     # print(s.searchTime('Miles Huang', 'FR50m'))
     # print(s.calculateRelayTime()) 
     print(Simulation.timeConversionAPAC('29.00'))
