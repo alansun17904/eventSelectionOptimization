@@ -99,9 +99,10 @@ class Filter:
                 time = racesForTargetSwimmer.iloc[0]['Time']
                 return [event, Filter.rank(place), time]
             else:
-                minimum = racesForTargetSwimmer.loc[racesForTargetSwimmer.idxmin()]
-                place = minimum.iloc[0]['Rank']
-                time = minimum.iloc[0]['Time']
+                minimum = racesForTargetSwimmer.loc[racesForTargetSwimmer['Time'].idxmin()]
+                print(minimum)
+                place = minimum.loc['Rank']
+                # time = minimum.iloc[0]['Time']
                 return [event, Filter.rank(place)]
     
     @staticmethod
@@ -141,6 +142,7 @@ class Filter:
             return Filter.rank(place) / 4, time
         else:
             return -1000, 'NT'
+
 
 if __name__ == '__main__':
     print(Filter.assessSkill(0, 0, 0))

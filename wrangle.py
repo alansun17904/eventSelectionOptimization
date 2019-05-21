@@ -9,7 +9,7 @@ from swimmer import Filter
 
 class ScoreSchema:
     def __init__(self):
-        originalData = pd.read_excel('data/ilikeswim.xlsx', sheet_name='bois')
+        originalData = pd.read_excel('data/processed.xlsx', sheet_name='Sheet1')
         originalData['Time'] = originalData['Time'].apply(ScoreSchema.timeConversion)
         self.schema = []
         self.timeSchema = []
@@ -24,8 +24,11 @@ class ScoreSchema:
             self.timeSchema.append(targetSwimmerTime)
         self.schema = pd.DataFrame(self.schema, index=SWIMMERS, columns=[v.name for v in list(SwimmingRace)])
         self.timeSchema = pd.DataFrame(self.timeSchema, index=SWIMMERS, columns=[v.name for v in list(SwimmingRace)])
+
     @staticmethod
     def timeConversion(time):
+        if time[0] == 'x':
+            time = time[1:]
         totalTime = 0
         if type(time) == float:
             return time
