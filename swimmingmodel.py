@@ -88,7 +88,6 @@ if __name__ == "__main__":
     strategy = pd.DataFrame(model.optimize(), index=SWIMMERS, columns=allEvents)
     # TODO: Add a time schema to see the times chosen for the program
 
-
     # Write to excel
     strategy.to_excel('data/schema.xlsx', sheet_name="Strategy")
     scoreSchema.schema.to_excel('data/scoring.xlsx', sheet_name="Scoring")
