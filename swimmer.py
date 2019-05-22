@@ -94,7 +94,7 @@ class Filter:
         :return: [event (str), score (int), time (float)]
         """
         racesForTargetSwimmer = df[(df['Event'] == event) & (df['Name'] == name)]
-        if len(racesForTargetSwimmer) == 0:
+        if len(racesForTargetSwimmer) == 0:  # Relay event
             points, time = Filter.assessSkill(df, name, event)
             return [event, points, time]
         else:
@@ -107,8 +107,9 @@ class Filter:
                 # COST FUNCTION RIGHT HERE
                 time = minimum.loc['Time']
                 place = Filter.ranksuite.compare(event, time)
-                if place == 0:  # Relay event
-                    p, = Filter.assessSkill(df, name, event)
+                if place == 0:  # Relay event if the swimmer has swam a relay event before
+                    p, time = Filter.assessSkill(df, name, event)
+                    return [event, p, time]
                 return [event, Filter.rank(place), time]
     
     @staticmethod

@@ -87,7 +87,7 @@ if __name__ == "__main__":
                   ind_relay_events=5, individualEvents=individualEvents, IMrelay=IMrelay, team_num=4)
     strategy = pd.DataFrame(model.optimize(), index=SWIMMERS, columns=allEvents)
     # TODO: Add a time schema to see the times chosen for the program
-
+    scoreSchema.timeSchema.to_excel('data/times.xlsx', sheet_name="Times")
     # Write to excel
     strategy.to_excel('data/schema.xlsx', sheet_name="Strategy")
     scoreSchema.schema.to_excel('data/scoring.xlsx', sheet_name="Scoring")
