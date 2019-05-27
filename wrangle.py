@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+from datetime import datetime
 from pprint import pprint
 import sys
 from swimmer import SCORE, SWIMMERS, SwimmingRace
@@ -8,9 +9,13 @@ from swimmer import Filter
 
 
 class ScoreSchema:
-    def __init__(self):
+    def __init__(self, limitdate):
         originalData = pd.read_excel('data/processed.xlsx', sheet_name='Sheet1')
         originalData['Time'] = originalData['Time'].apply(ScoreSchema.timeConversion)
+        print(originalData.iloc[0]['Date'])
+        print(limitdate)
+        originalData['Date'] = pd.to_datetime(originalData['Date'])
+        originalData = originalData[originalData['Date'] < limitdate]
         self.schema = []
         self.timeSchema = []
         for swimmer in SWIMMERS:
