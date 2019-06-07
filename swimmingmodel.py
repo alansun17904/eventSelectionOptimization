@@ -83,7 +83,7 @@ if __name__ == "__main__":
     IMrelay = [v.name for v in list(SwimmingRace) if v.value >= 15]
     scoreSchema = ScoreSchema()
     # create new lp problem
-    model = Model(SWIMMERS, allEvents, min_relays=1, max_relays=2, score=scoreSchema, ind_events=4,
+    model = Model(SWIMMERS, allEvents, min_relays=1, max_relays=1, score=scoreSchema, ind_events=4,
                   ind_relay_events=5, individualEvents=individualEvents, IMrelay=IMrelay, team_num=4)
     strategy = pd.DataFrame(model.optimize(), index=SWIMMERS, columns=allEvents)
     # TODO: Add a time schema to see the times chosen for the program
