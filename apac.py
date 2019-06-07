@@ -7,7 +7,7 @@ class APAC:
         """
 
         :param gender:
-        :param year:
+        :param year: the end year which all data is compared at.
         :param prelims:
             0: denotes that all prelims and finals should be considered
             1: only prelims
@@ -18,7 +18,7 @@ class APAC:
 
         if year is not None:
             print("You are comparing against all of " + str(year) + "'s swims.")
-            self.APAC_data = self.APAC_data[self.APAC_data['Date'].year == year]
+            self.APAC_data = self.APAC_data[self.APAC_data['Date'].dt.year <= year]
         self.APAC_data['Time'] = self.APAC_data['Time'].apply(APAC.time_conversion)
         self.APAC_data = self.APAC_data[self.APAC_data['Gender'] == gender]
 

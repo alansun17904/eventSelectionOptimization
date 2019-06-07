@@ -64,7 +64,7 @@ class SwimmingRace(enum.Enum):
 
 
 class Filter:
-    ranksuite = apac.APAC(prelims=1)  # FIXME: This is not good architecture....
+    ranksuite = apac.APAC(year=2017, prelims=0)  # FIXME: This is not good architecture....
     skillFinder = {'FRRelay4P50': 'FR50m',
                    'FRRelay4P100': 'FR100m',
                    'IMRelay4P50_FR': 'FR50m',

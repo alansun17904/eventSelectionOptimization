@@ -1,4 +1,5 @@
 import pulp
+from datetime import datetime
 from swimmer import SWIMMERS
 from swimmer import SwimmingRace
 from wrangle import ScoreSchema
@@ -7,7 +8,8 @@ import pandas as pd
 
 class Model:
     def __init__(self, swimmers: list, events: list, min_relays: int, max_relays: int, score,
-                 ind_events: int, ind_relay_events: int, individualEvents: list, IMrelay: list, team_num: int):
+                 ind_events: int, ind_relay_events: int, individualEvents: list, IMrelay: list, team_num: int,
+                 custom_lock = [[]], custom_unlock = [[]]):
         """
         Constructuor that creates a new LP Problem using the `pulp` package.
         :param swimmers: A list of all the names (str) of the swimmers being optimzed.
@@ -22,6 +24,8 @@ class Model:
         :param IMrelay: A list of the order of the IM Relay... It is assumed that the IM relay is the
         4x50 medeley relay.
         :param team_num: The maximum number of people a team is allowed to send in an event.
+        :param custom_lock: A nested list that contains the swimmer and the event he or she must be place in.
+        :param custom_unlock: A nested list that contains the swimmer and the event he or she must not be placed in.
         """
         self.problem = pulp.LpProblem('Swimming score maximizing problem', pulp.LpMaximize)
         self._SWIMMERS = swimmers
@@ -81,7 +85,7 @@ if __name__ == "__main__":
     individualEvents = [v.name for v in list(SwimmingRace) if v.value < 13]
     relayEvents = [v.name for v in list(SwimmingRace) if v.value >= 13]
     IMrelay = [v.name for v in list(SwimmingRace) if v.value >= 15]
-    scoreSchema = ScoreSchema()
+    scoreSchema = ScoreSchema(datetime(2019, 1, 23))
     # create new lp problem
     model = Model(SWIMMERS, allEvents, min_relays=1, max_relays=1, score=scoreSchema, ind_events=4,
                   ind_relay_events=5, individualEvents=individualEvents, IMrelay=IMrelay, team_num=4)
