@@ -57,6 +57,7 @@ def score_min_internal_db(whole_df, comparison_df, swimmer, race_name):
 
 
 def score_weighted_average_internal_db(whole_df, comparison_df, swimmer, race_name, startdate, enddate):
+    # TODO: Finish this score function
     """
     Scores swimmers based on a weighted average. The closer the date is to the enddate / today the more meaningful
     their point contributions will be.
@@ -81,7 +82,7 @@ def score_weighted_average_internal_db(whole_df, comparison_df, swimmer, race_na
         delta_days = (enddate - dt.datetime(race['Date'].year, race['Date'].month, race['Date'].day)).days
         score = settings.score(len(rank))
         total_scores.append((score * (1 / delta_days), 1 / delta_days))
-    return sum(v[0] for v in total_scores]) / sum([v[1] for v in total_scores])
+    # return sum(v[0] for v in total_scores]) / sum([v[1] for v in total_scores])
 
 
 def score_past_apac(df, swimmer, race_name, startdate, enddate, prelims=True):

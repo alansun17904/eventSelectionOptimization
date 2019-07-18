@@ -70,7 +70,8 @@ class Optimize:
             for s, e in self.swimmerStatus:
                 if swimmer == s:
                     row.append(self.swimmerStatus[(s, e)].varValue)
-                else: continue
+                else:
+                    continue
             output.append(row)
         return output
 

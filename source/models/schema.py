@@ -8,6 +8,13 @@ import sys
 
 class Schema:
     def __init__(self, swimmers: list, allevents, limitdate, filterF, score):
+        """
+        :param swimmers: SwimmerList from settings.py
+        :param allevents: The enum class declared in settings.py
+        :param limitdate: datetime object that marks the ending date for which all swims will be considered
+        :param filterF: The function that will be used to filter all of the swims (filter/filters.py)
+        :param score: The score function that will be used to calculate contribution (filter/scoring.py)
+        """
         Schema.changeToDataDirectory()
         originalData = pd.read_excel('processed.xlsx', sheet_name='Sheet1')  # read in excel sheet with all historic data
         originalData['Time'] = originalData['Time'].apply(Schema.timeConversion)  # convert fields `time` to datetime objects
