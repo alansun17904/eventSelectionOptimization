@@ -10,11 +10,8 @@ def assess_skill(df, swimmer, race_name):
     races = df[(df['Event'] == race_name) & (df['Name'] == swimmer)]
     if len(races) == 0:
         all_skill_names = [v.name for v in SKILL_SET.keys()]
-        print(all_skill_names)
-        print(race_name)
         matching_race = SKILL_SET[SwimmingRace[race_name]] if race_name in all_skill_names else None
         # Find skill set of a race that the swimmer does not have any times for.
-        print(matching_race)
         if matching_race is None:
             return race_name, 'NT'
         else: 

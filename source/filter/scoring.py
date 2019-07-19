@@ -52,7 +52,6 @@ def score_min_internal_db(whole_df, comparison_df, swimmer, race_name):
                           (comparison_df['Gender'] == settings.GENDER) &
                           (comparison_df['Name'] != swimmer) &  # target swimmer does not compare against themselves
                           (comparison_df['Time'] < self_races[1])]  # how many swimmers are faster than target
-    print(len(races))
     return settings.score(len(races) + 1)
 
 
@@ -72,13 +71,11 @@ def score_weighted_average_internal_db(whole_df, comparison_df, swimmer, race_na
     self_races = filters.assess_skill(whole_df, swimmer, race_name)
     self_races = self_races[self_races['Date'].between(startdate, enddate)]  # limiting to rows that are between dates
     total_scores = []
-    # print(self_races)
     for index, race in self_races.iterrows():
         rank = comparison_df[(comparison_df['Event'] == race_name) &
                              (comparison_df['Gender'] == settings.GENDER) &
                              (comparison_df['Name'] != swimmer) &
                              (comparison_df['Time'] < race['Time'])]
-        print(type(enddate))
         delta_days = (enddate - dt.datetime(race['Date'].year, race['Date'].month, race['Date'].day)).days
         score = settings.score(len(rank))
         total_scores.append((score * (1 / delta_days), 1 / delta_days))

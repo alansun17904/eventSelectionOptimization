@@ -1,6 +1,5 @@
 import enum
-from source.filter.filters import time_min
-from source.filter.scoring import score_max_internal_db
+import os
 
 
 @enum.unique
@@ -55,9 +54,9 @@ SKILL_SET = {
     SwimmingRace(18): SwimmingRace(9),
 }
 
-FILTER_FUNCTION = time_min
-
-SCORE_FUNCTION = score_max_internal_db
+# FILTER_FUNCTION = time_min
+#
+# SCORE_FUNCTION = score_max_internal_db
 
 
 def score(rank):

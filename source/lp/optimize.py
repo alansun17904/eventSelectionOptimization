@@ -1,4 +1,5 @@
 import pulp
+import datetime
 
 
 class Optimize:
@@ -17,7 +18,7 @@ class Optimize:
         allowed to participate in.
         :param individualEvents: A list of all of the individual events being optimized.
         :param IMrelay: A list of the order of the IM Relay... It is assumed that the IM relay is the
-        4x50 medeley relay.
+        4 x 50 medeley relay.
         :param team_num: The maximum number of people a team is allowed to send in an event.
         :param custom_lock: A nested list that contains the swimmer and the event he or she must be place in.
         :param custom_unlock: A nested list that contains the swimmer and the event he or she must not be placed in.
@@ -25,6 +26,7 @@ class Optimize:
         self.problem = pulp.LpProblem('Swimming score maximizing problem', pulp.LpMaximize)
         self._SWIMMERS = swimmers
         self._EVENTS = events
+        self.optimal = []
         # Variable Creation
         self.swimmerStatus = pulp.LpVariable.dicts('swimmerStatus',
                                                    ((swimmer, event) for swimmer in self._SWIMMERS
@@ -57,7 +59,8 @@ class Optimize:
         self.problem += pulp.lpSum([self.swimmerStatus[(s, e)] for e in IMrelay for s in self._SWIMMERS]) == 4 * self.numberOfRelays
         # relay constraint4: IMRelay4P50 must be 4 people swimming different strokes
         for stroke in IMrelay:
-            self.problem += pulp.lpSum([self.swimmerStatus[(s, stroke)] for s in self._SWIMMERS]) <= self.numberOfRelays
+            self.problem += pulp.lpSum([self.swimmerStatus[(s, stroke)]
+                                        for s in self._SWIMMERS]) <= self.numberOfRelays
 
     def optimize(self):
         # LP Solve
@@ -73,5 +76,13 @@ class Optimize:
                 else:
                     continue
             output.append(row)
+        self.optimal = output
         return output
 
+    def write_optimal(self):
+        f_out = open(f'data/out/{datetime.datetime.now().strftime("%m-%d-%y<>%H:%M:%S")}.txt', 'w+')
+        header = ' ' * 15 + ''.join([e.rjust(15, ' ') for e in self._EVENTS]) + '\n'
+        f_out.write(header)
+        for row in range(len(self.optimal)):
+            output_row = list(map(lambda s: str(s).rjust(15, ' '), self.optimal[row]))
+            f_out.write(self._SWIMMERS[row].rjust(15, ' ') + ''.join(output_row) + '\n')

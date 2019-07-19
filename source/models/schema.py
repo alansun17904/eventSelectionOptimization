@@ -1,13 +1,10 @@
 import pandas as pd
-import numpy as np
 import os
-from datetime import datetime
-from pprint import pprint
-import sys
+from source.filter.scoring import create_comparison_db
 
 
 class Schema:
-    def __init__(self, swimmers: list, allevents, limitdate, filterF, score):
+    def __init__(self, swimmers: list, allevents, limitdate, filterF, score_func):
         """
         :param swimmers: SwimmerList from settings.py
         :param allevents: The enum class declared in settings.py
@@ -15,11 +12,15 @@ class Schema:
         :param filterF: The function that will be used to filter all of the swims (filter/filters.py)
         :param score: The score function that will be used to calculate contribution (filter/scoring.py)
         """
-        Schema.changeToDataDirectory()
-        originalData = pd.read_excel('processed.xlsx', sheet_name='Sheet1')  # read in excel sheet with all historic data
-        originalData['Time'] = originalData['Time'].apply(Schema.timeConversion)  # convert fields `time` to datetime objects
-        originalData['Date'] = pd.to_datetime(originalData['Date'])  # convert fields `date` to datetime objects
+        # Schema.changeToDataDirectory()
+        # read in excel sheet with all historic data
+        originalData = pd.read_excel('data/in/processed.xlsx', sheet_name='Sheet1')
+        # convert fields `time` to datetime objects
+        originalData['Time'] = originalData['Time'].apply(Schema.timeConversion)
+        originalData['Date'] = pd.to_datetime(originalData['Date'])   # convert fields `date` to datetime objects
         originalData = originalData[originalData['Date'] < limitdate]  # find all times swam before the limitdate
+        # creates a new df with unique entries for each swimmer
+        comparison_df = create_comparison_db(originalData, filterF)
         self.schema = []  # stores the point contribution for each swimmer in each event
         self.timeSchema = []   # stores the times of each swimmer in each event 
         for swimmer in swimmers:
@@ -27,7 +28,7 @@ class Schema:
             targetSwimmerTime = []
             for race in list(allevents):
                 event, time = filterF(originalData, swimmer, race.name)
-                score = score()
+                score = score_func(originalData, comparison_df, swimmer, race.name)
                 targetSwimmerScore.append(score)
                 targetSwimmerTime.append(time)
             self.schema.append(targetSwimmerScore)
@@ -52,6 +53,7 @@ class Schema:
     @staticmethod
     def changeToDataDirectory():
         try:
+            os.chdir('..')
             os.chdir('..')
             os.chdir('data')
             os.chdir('in')
