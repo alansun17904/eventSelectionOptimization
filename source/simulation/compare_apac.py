@@ -33,11 +33,12 @@ class Simulation:
 
     def read_apac_data(self):
         original_data = pd.read_excel('data/in/APAC_all.xlsx', sheet_name='Sheet1')
-        original_data['Time'].apply(Simulation.apac_time_conversion)
-        original_data['Date'].apply(lambda s: int(str(s)[0:4]))
-        original_data = original_data[original_data['Date'] == str(self.year)]
+        original_data['Time'] = original_data['Time'].apply(Simulation.apac_time_conversion)
+        original_data['Date'] = original_data['Date'].apply(lambda s: int(str(s)[0:4]))
+        original_data = original_data[original_data['Date'] == self.year]
         self.apac_with_team = original_data  # apac data with the team that is being optimized
-        self.apac = original_data if self.remove_self else original_data  # apac data without optimize team
+        # apac data without optimize team
+        self.apac = original_data[original_data['SchoolSerial'] != 'ISB'] if self.remove_self else original_data
 
     def _create_new_time_schema(self):
         """

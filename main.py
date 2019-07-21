@@ -22,4 +22,5 @@ optimize = lp.Optimize(settings.SWIMMERS, events=events, min_relays=1,
 optimize.optimize()
 # optimize.write_optimal()
 s = Simulation(2018, optimize)
-print(s.run_simulation())
+apac_df = s.run_simulation()
+print(apac_df[apac_df['SchoolSerial'] == 'ISB'])
