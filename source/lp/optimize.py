@@ -1,9 +1,10 @@
 import pulp
 import datetime
+from source.models.schema import Schema
 
 
 class Optimize:
-    def __init__(self, swimmers: list, events: list, min_relays: int, max_relays: int, score,
+    def __init__(self, swimmers: list, events: list, min_relays: int, max_relays: int, score: Schema,
                  ind_events: int, ind_relay_events: int, individualEvents: list, IMrelay: list, team_num: int,
                  custom_lock = [[]], custom_unlock = [[]]):
         """
@@ -25,6 +26,7 @@ class Optimize:
         """
         self.problem = pulp.LpProblem('Swimming score maximizing problem', pulp.LpMaximize)
         self._SWIMMERS = swimmers
+        self.score = score
         self._EVENTS = events
         self.optimal = []
         # Variable Creation
@@ -86,3 +88,9 @@ class Optimize:
         for row in range(len(self.optimal)):
             output_row = list(map(lambda s: str(s).rjust(15, ' '), self.optimal[row]))
             f_out.write(self._SWIMMERS[row].rjust(15, ' ') + ''.join(output_row) + '\n')
+        f_out.write('\n')
+        for row in range(len(self.score.timeSchema)):
+            output_row = list(map(lambda s: str(round(s, 2)).rjust(15, ' '), list(self.score.timeSchema.iloc[row])))
+            f_out.write(self._SWIMMERS[row].rjust(15, ' ') + ''.join(output_row) + '\n')
+
+        f_out.close()
