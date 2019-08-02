@@ -10,7 +10,7 @@ def create_comparison_db(df, filterF):
                  'Gender': [],
                  'Event': [],
                  'Time': []}
-    for name in df['Name'].unique():
+    for name in settings.SWIMMERS:  # TODO: settings.SWIMMERS only compare within team can also compare with entire data
         for event in df[df['Name'] == name]['Event'].unique():
             unique_db['Name'].append(name)
             unique_db['Gender'].append(df[df['Name'] == name]['Gender'].iloc[0])
@@ -27,7 +27,10 @@ def score_max_internal_db(whole_df, comparison_df, swimmer, race_name):
     of points the swimmer would score by chosing to score their fastest time.
     :returns: a float that represents the score that target swimmer gets in ranking system.
     """
-    self_races = filters.time_min(whole_df, swimmer, race_name)  # TODO: change filters.time_min to take from settings.py
+    # TODO: change filters.time_min to take from settings.py
+    self_races = filters.time_min(whole_df, swimmer, race_name)
+    if self_races == 'NT':
+        return -10000
     races = comparison_df[(comparison_df['Event'] == race_name) &  # check if event is the same
                           (comparison_df['Gender'] == settings.GENDER) &
                           (comparison_df['Name'] != swimmer) &  # target swimmer does not compare against themselves
@@ -48,6 +51,8 @@ def score_min_internal_db(whole_df, comparison_df, swimmer, race_name):
     """
     gender = 'BOYS'
     self_races = filters.time_max(whole_df, swimmer, race_name)
+    if self_races == 'NT':
+        return -10000
     races = comparison_df[(comparison_df['Event'] == race_name) &  # check if event is the same
                           (comparison_df['Gender'] == settings.GENDER) &
                           (comparison_df['Name'] != swimmer) &  # target swimmer does not compare against themselves

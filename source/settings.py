@@ -40,8 +40,8 @@ SCORE = {
     12: 1,
 }
 
-SWIMMERS = ['Miles Huang', 'Curtis Wong', 'King Wah', 'Justin Choi', 'Aaron Wu', 'Frank Zhou',
-            'Alan Wang', 'Alan Sun', 'Bernard Ip', 'Kan KikuchiYuan', 'Jerry Zheng', 'Aaron Sun']
+SWIMMERS = ['Kan KikuchiYuan', 'Alan Wang', 'Aaron Wu', 'Kingston Yip', 'Matthew Yu', 'Aaron Sun',
+            'Justin Choi', 'Curtis Wong', 'Sung Cho', 'Alan Sun', 'Joseph Chew', 'Harry Shiu']
 
 GENDER = 'BOYS'
 

@@ -9,7 +9,7 @@ from source.simulation.compare_apac import Simulation
 
 
 schema = models.Schema(swimmers=settings.SWIMMERS, allevents=settings.SwimmingRace,
-                       limitdate=datetime(2020, 1, 1), filterF=time_min,
+                       limitdate=datetime(2018, 1, 20), filterF=time_min,
                        score_func=score_max_internal_db)
 events = [e.name for e in settings.SwimmingRace]
 individual_events = [e.name for e in settings.SwimmingRace if e.value < 13]
@@ -20,7 +20,8 @@ optimize = lp.Optimize(settings.SWIMMERS, events=events, min_relays=1,
                       individualEvents=individual_events, IMrelay=im_relay,
                       team_num=4)
 optimize.optimize()
-# optimize.write_optimal()
+optimize.write_optimal()
 s = Simulation(2018, optimize)
 apac_df = s.run_simulation()
-print(apac_df[apac_df['SchoolSerial'] == 'ISB'])
+print(s.score_apac())
+print(apac_df[apac_df['SchoolSerial'] == 'ISB'][['Name', 'Time', 'Rank', 'Event']])

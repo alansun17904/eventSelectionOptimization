@@ -15,7 +15,7 @@ def assess_skill(df, swimmer, race_name):
         if matching_race is None:
             return race_name, 'NT'
         else: 
-            return df[(df['Event'] == matching_race.name) & (df['Name'] == swimmer)]
+            return assess_skill(df, swimmer, matching_race.name)
         
     else:
         return races 
@@ -26,6 +26,8 @@ def time_min(df, swimmer, race_name):
     Finds the fastest time that swimmer `swimmer` has in `race_name`.
     """
     races = assess_skill(df, swimmer, race_name)
+    if type(races) == tuple:
+        return 'NT'
     min_race = races.loc[races['Time'].idxmin()]
     return min_race['Event'], min_race['Time']
 
@@ -35,6 +37,8 @@ def time_max(df, swimmer, race_name):
     Finds the slowest time that swimmer `swimmer` has in `race_name`.
     """
     races = assess_skill(df, swimmer, race_name)
+    if type(races) == tuple:
+        return 'NT'
     max_race = races.loc[races['Time'].idxmax()]
     return max_race['Event'], max_race['Time']
 
@@ -44,6 +48,8 @@ def time_mean(df, swimmer, race_name):
     Finds the average time that swimmer `swimmer` has in `race_name`.
     """
     races = assess_skill(df, swimmer, race_name)
+    if type(races) == tuple:
+        return 'NT'
     mean_time = races['Time'].mean()
     return races['Event'].iloc[0], round(mean_time, 2)
 
