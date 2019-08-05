@@ -20,8 +20,9 @@ optimize = lp.Optimize(settings.SWIMMERS, events=events, min_relays=1,
                       individualEvents=individual_events, IMrelay=im_relay,
                       team_num=4)
 optimize.optimize()
-optimize.write_optimal()
+# optimize.write_optimal()
 s = Simulation(2018, optimize)
 apac_df = s.run_simulation()
 print(s.score_apac())
-print(apac_df[apac_df['SchoolSerial'] == 'ISB'][['Name', 'Time', 'Rank', 'Event']])
+print(apac_df[(apac_df['Event'] == 'FR100m') & (apac_df['Prelim/Finals'] != 'Prelim')]
+      [['SchoolSerial', 'Name', 'Time', 'Rank', 'Event', 'Prelim/Finals']])

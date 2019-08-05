@@ -1,5 +1,6 @@
 from source.lp.optimize import Optimize
 from source.models.schema import Schema
+import numpy as np
 from source.settings import SWIMMERS, SwimmingRace, score, GENDER
 import pandas as pd
 
@@ -32,14 +33,18 @@ class Simulation:
                 return int(t_components[0]) + int(t_components[1]) / 100
 
     def read_apac_data(self):
+        relays = [SwimmingRace(13).name, SwimmingRace(14).name, SwimmingRace(15).name,
+                  SwimmingRace(16).name, SwimmingRace(17).name, SwimmingRace(18).name]
         original_data = pd.read_excel('data/in/APAC_all.xlsx', sheet_name='Sheet1')
         original_data['Time'] = original_data['Time'].apply(Simulation.apac_time_conversion)
         original_data['Date'] = original_data['Date'].apply(lambda s: int(str(s)[0:4]))
+        original_data['PendingState'] = '-'
         # original_data['Name'] = original_data['Name'].apply(lambda s: f'{s.split(",")[1].strip()} '
         #                                                               f'{s.split(",")[0].strip()}')
         original_data = original_data[original_data['Date'] == self.year]
         # limits initialization gender to the one in settings.py
         original_data = original_data[original_data['Gender'] == GENDER]
+        original_data = original_data[~original_data['Event'].isin(relays)]
         self.apac_with_team = original_data  # apac data with the team that is being optimized
         # apac data without optimize team
         self.apac = original_data[original_data['SchoolSerial'] != 'ISB'] if self.remove_self else original_data
@@ -81,12 +86,12 @@ class Simulation:
             raise RuntimeError(f'More than one race found for swimmer {swimmer_name} at event {swimming_race}')
         elif len(prelim_races) == 0:  # they didnt swim a prelim race
             return (-1, -1),
-        elif prelim_races and finals_races:  # if they made prelims and finals
+        elif len(prelim_races) != 0 and len(finals_races) == 0:  # if they made prelims but not finals
             return ((prelim_races.iloc[0]['Time'], prelim_races.iloc[0]['Rank']),
                     (-1, -1))
         else:
-            return ((prelim_races.iloc[0]['Time'], prelim_races.iloc[0]['Rank']),
-                    (finals_races.iloc[0]['Time'], finals_races.iloc[0]['Rank']))
+            return ((prelim_races.iloc[0]['Time'], prelim_races.iloc[0]['Rank']),  # prelims time and rank
+                    (finals_races.iloc[0]['Time'], finals_races.iloc[0]['Rank']))  # finals time and rank
 
     def add_race(self, swimmer_name, event_name, previous_race_status, time=0):
         """
@@ -124,6 +129,13 @@ class Simulation:
                 # we are going to take the exact amount of points that they scored at the meet
             }, ignore_index=True)
         else:  # they swam prelims and then ended up making finals
+            if previous_race_status[1][1] <= 8:
+                finals_status = 'Finals'
+            elif 8 < previous_race_status[1][1] <= 16:
+                finals_status = 'Finals'
+            else:
+                finals_status = 'Prelim'
+
             self.apac = self.apac.append({
                 'SchoolSerial': 'ISB',
                 'Gender': GENDER,
@@ -133,11 +145,10 @@ class Simulation:
                 'Rank': previous_race_status[1][1],
                 'Age': 0,
                 'Date': self.year,
-                'Prelim/Finals': 'Finals'
-            })
-            previous_race_status = (previous_race_status[0], (-1, -1))
-            self.add_race(swimmer_name, event_name, previous_race_status)
-
+                'Prelim/Finals': finals_status
+            }, ignore_index=True)
+            # previous_race_status = (previous_race_status[0], (-1, -1))
+            # self.add_race(swimmer_name, event_name, previous_race_status)
 
     def run_simulation(self):
         self.read_apac_data()
@@ -164,15 +175,46 @@ class Simulation:
         team_scores = {}
         # give each person a time based on their prelim performance
         for row in range(len(self.apac)):  # give each person a score based on their time
+            if self.apac['Prelim/Finals'][row] == 'Prelim':
+                rank = len(self.apac[(self.apac['Gender'] == GENDER) & (self.apac['Event'] == self.apac['Event'][row])
+                                 & (self.apac['Time'] < self.apac['Time'][row])
+                                 & (self.apac['Prelim/Finals'] == 'Prelim')]) + 1
+                self.apac.at[row, 'Rank'] = 0
+                if 8 < rank <= 16:  # split the people that made finals into finals A and finals B
+                    if self.apac['Event'][row] == 'FR100m':
+                        print(self.apac['SchoolSerial'][row], self.apac['Time'][row], rank)
+                    finals_status = 'Finals_B'
+                elif rank <= 8:
+                    finals_status = 'Finals_A'
+                else:
+                    continue
+            else:
+                continue
+            # change competitor final status to either finals A or finals B
+            rindex = self.apac.index[(self.apac['Event'] == self.apac['Event'][row])
+                                & (self.apac['Name'] == self.apac['Name'][row])
+                                & (self.apac['SchoolSerial'] == self.apac['SchoolSerial'][row])
+                                & (self.apac['Prelim/Finals'] == 'Finals')].tolist()
+            if len(rindex) == 0:
+                # if the competitor was not originally in the apac final for this event
+                self.apac.at[row, 'PendingState'] = finals_status
+            else:
+                self.apac.at[rindex[0], 'PendingState'] = finals_status
+
+        for row in range(len(self.apac)):  # e valuate the results from the finals
+            self.apac.at[row, 'Prelim/Finals'] = self.apac['PendingState'][row]
             rank = len(self.apac[(self.apac['Gender'] == GENDER) & (self.apac['Event'] == self.apac['Event'][row])
-                             & (self.apac['Time'] < self.apac['Time'][row])
-                             & (self.apac['Prelim/Finals'] == 'Prelim')]) + 1
+                                 & (self.apac['Time'] < self.apac['Time'][row])
+                                 & (self.apac['Prelim/Finals'] == self.apac['Prelim/Finals'][row])]) + 1
+            if self.apac['Prelim/Finals'][row] == 'Finals_B':
+                rank += 8
+
             self.apac.at[row, 'Rank'] = score(rank)
 
         # loop through all the teams and add them to the team_scores dictionary
         for team in self.apac['SchoolSerial'].unique():
-            sum_df = self.apac[(self.apac['SchoolSerial'] == team) & (self.apac['Gender'] == GENDER)]
+            sum_df = self.apac[(self.apac['SchoolSerial'] == team) & (self.apac['Gender'] == GENDER)
+                               & (self.apac['Prelim/Finals'] != 'Prelim')]
             if team not in team_scores:
                 team_scores[team] = sum_df['Rank'].sum()
-
         return team_scores

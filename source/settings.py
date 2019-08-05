@@ -26,18 +26,22 @@ class SwimmingRace(enum.Enum):
 
 SCORE = {
     0:  30,  # TODO: This is a temporary fix for to avoid implementing a cost function
-    1:  16,
-    2:  13,
-    3:  12,
-    4:  11,
-    5:  10,
-    6:  9,
-    7:  7,
-    8:  5,
-    9:  4,
-    10: 3,
-    11: 2,
-    12: 1,
+    1:  20,
+    2:  17,
+    3:  16,
+    4:  15,
+    5:  14,
+    6:  13,
+    7:  12,
+    8:  11,
+    9:  9,
+    10: 7,
+    11: 6,
+    12: 5,
+    13: 4,
+    14: 3,
+    15: 2,
+    16: 1,
 }
 
 SWIMMERS = ['Kan KikuchiYuan', 'Alan Wang', 'Aaron Wu', 'Kingston Yip', 'Matthew Yu', 'Aaron Sun',
@@ -60,7 +64,7 @@ SKILL_SET = {
 
 
 def score(rank):
-    if rank > 12:
+    if rank > 16:
         return 0
     else:
         return SCORE[rank]
