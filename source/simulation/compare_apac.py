@@ -100,7 +100,7 @@ class Simulation:
         have swam at apac.
         :param prelims: (bool) True if the person swam the prelims for this race.
         :param finals: (bool) True if the person swam the prelims and the finals for this race.
-        :param time: (float) only provide a time if both prelims & fianls are false.
+        :param time: (float) only provide a time if both prelims & finals are false.
         :return: None
         """
         if previous_race_status[0][0] == -1:  # never swam this event before
@@ -130,12 +130,11 @@ class Simulation:
             }, ignore_index=True)
         else:  # they swam prelims and then ended up making finals
             if previous_race_status[1][1] <= 8:
-                finals_status = 'Finals'
+                finals_status = 'Finals_A'
             elif 8 < previous_race_status[1][1] <= 16:
-                finals_status = 'Finals'
+                finals_status = 'Finals_B'
             else:
                 finals_status = 'Prelim'
-
             self.apac = self.apac.append({
                 'SchoolSerial': 'ISB',
                 'Gender': GENDER,
@@ -181,8 +180,8 @@ class Simulation:
                                  & (self.apac['Prelim/Finals'] == 'Prelim')]) + 1
                 self.apac.at[row, 'Rank'] = 0
                 if 8 < rank <= 16:  # split the people that made finals into finals A and finals B
-                    if self.apac['Event'][row] == 'FR100m':
-                        print(self.apac['SchoolSerial'][row], self.apac['Time'][row], rank)
+                    # if self.apac['Event'][row] == 'FR100m':
+                    #     print(self.apac['SchoolSerial'][row], self.apac['Time'][row], rank)
                     finals_status = 'Finals_B'
                 elif rank <= 8:
                     finals_status = 'Finals_A'
@@ -202,7 +201,12 @@ class Simulation:
                 self.apac.at[rindex[0], 'PendingState'] = finals_status
 
         for row in range(len(self.apac)):  # e valuate the results from the finals
+            if str(self.apac.at[row, 'PendingState']) == 'nan':
+                self.apac.at[row, 'Rank'] = score(rank)
+                continue
             self.apac.at[row, 'Prelim/Finals'] = self.apac['PendingState'][row]
+
+        for row in range(len(self.apac)):
             rank = len(self.apac[(self.apac['Gender'] == GENDER) & (self.apac['Event'] == self.apac['Event'][row])
                                  & (self.apac['Time'] < self.apac['Time'][row])
                                  & (self.apac['Prelim/Finals'] == self.apac['Prelim/Finals'][row])]) + 1
@@ -214,7 +218,7 @@ class Simulation:
         # loop through all the teams and add them to the team_scores dictionary
         for team in self.apac['SchoolSerial'].unique():
             sum_df = self.apac[(self.apac['SchoolSerial'] == team) & (self.apac['Gender'] == GENDER)
-                               & (self.apac['Prelim/Finals'] != 'Prelim')]
+                               & (self.apac['Prelim/Finals'].isin(['Finals_A', 'Finals_B']))]
             if team not in team_scores:
                 team_scores[team] = sum_df['Rank'].sum()
         return team_scores
