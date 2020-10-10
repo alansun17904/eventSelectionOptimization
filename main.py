@@ -4,13 +4,13 @@ from datetime import datetime
 from source import settings
 from source import models
 from source.filter.filters import time_min
-from source.filter.scoring import score_max_internal_db
+from source.filter.scoring import score_min_internal_db
 from source.simulation.compare_apac import Simulation
 
 
 schema = models.Schema(swimmers=settings.SWIMMERS, allevents=settings.SwimmingRace,
                        limitdate=datetime(2018, 1, 20), filterF=time_min,
-                       score_func=score_max_internal_db)
+                       score_func=score_min_internal_db)
 events = [e.name for e in settings.SwimmingRace]
 individual_events = [e.name for e in settings.SwimmingRace if e.value < 13]
 relay_events = [e.name for e in settings.SwimmingRace if e.name not in individual_events]
@@ -24,5 +24,5 @@ optimize.optimize()
 s = Simulation(2018, optimize)
 apac_df = s.run_simulation()
 print(s.score_apac())
-print(apac_df[(apac_df['Event'] == 'FR100m') & (apac_df['Prelim/Finals'] != 'Prelim')]
-      [['SchoolSerial', 'Name', 'Time', 'Rank', 'Event', 'Prelim/Finals']])
+# print(apac_df[(apac_df['Event'] == 'FR100m') & (apac_df['Prelim/Finals'] != 'Prelim')]
+#       [['SchoolSerial', 'Name', 'Time', 'Rank', 'Event', 'Prelim/Finals']])
