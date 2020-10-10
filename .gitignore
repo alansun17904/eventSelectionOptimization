@@ -125,3 +125,6 @@ dmypy.json
 
 # Pycharm
 *.idea
+
+# AWS SSH Authorization
+pblocks.pem

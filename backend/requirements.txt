@@ -1,6 +1,7 @@
 atomicwrites
 attrs
 importlib-metadata
+gunicorn
 django
 more-itertools
 numpy
